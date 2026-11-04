@@ -1,0 +1,190 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           Int               @id @default(autoincrement())
+  uuid         String            @unique @default(uuid())
+  email        String            @unique
+  passwordHash String            @map("password_hash")
+  fullName     String            @map("full_name")
+  phone        String?
+  avatarUrl    String?           @map("avatar_url")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  memberships  WorkspaceMember[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id              Int               @id @default(autoincrement())
+  uuid            String            @unique @default(uuid())
+  name            String
+  entityType      String            @default("individual") @map("entity_type") // individual | agency
+  legalName       String?           @map("legal_name")
+  taxId           String?           @map("tax_id")
+  logoUrl         String?           @map("logo_url")
+  defaultCurrency String            @default("USD") @map("default_currency")
+  address         String?
+  phone           String?
+  email           String?
+  title           String?           // e.g. "Senior Full-Stack Consultant"
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  members         WorkspaceMember[]
+  clients         Client[]
+  paymentAccounts PaymentAccount[]
+  invoices        Invoice[]
+
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @default(uuid())
+  workspaceId Int       @map("workspace_id")
+  userId      Int       @map("user_id")
+  role        String    @default("owner") // owner | member
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@map("workspace_members")
+}
+
+model Client {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @default(uuid())
+  workspaceId Int       @map("workspace_id")
+  name        String
+  companyName String?   @map("company_name")
+  email       String?
+  phone       String?
+  address     String?
+  taxId       String?   @map("tax_id")
+  currency    String?
+  notes       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invoices    Invoice[]
+
+  @@map("clients")
+}
+
+model PaymentAccount {
+  id            Int       @id @default(autoincrement())
+  uuid          String    @unique @default(uuid())
+  workspaceId   Int       @map("workspace_id")
+  label         String
+  type          String    @default("bank") // bank | wire | upi | wise | paypal
+  bankName      String?   @map("bank_name")
+  accountNumber String?   @map("account_number")
+  routingOrIfsc String?   @map("routing_or_ifsc")
+  upiId         String?   @map("upi_id")
+  swiftBic      String?   @map("swift_bic")
+  isDefault     Boolean   @default(false) @map("is_default")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invoices      Invoice[]
+
+  @@map("payment_accounts")
+}
+
+model Invoice {
+  id                 Int              @id @default(autoincrement())
+  uuid               String           @unique @default(uuid())
+  workspaceId        Int              @map("workspace_id")
+  clientId           Int?             @map("client_id")
+  paymentAccountId   Int?             @map("payment_account_id")
+  
+  invoiceNumber      String           @map("invoice_number")
+  invoiceDate        DateTime         @map("invoice_date")
+  dueDate            DateTime?        @map("due_date")
+  servicePeriod      String?          @map("service_period")
+  servicePeriodStart DateTime?        @map("service_period_start")
+  servicePeriodEnd   DateTime?        @map("service_period_end")
+  
+  type               String           @default("due") // due | paid
+  status             String           @default("due") // draft | due | partially_paid | paid | overdue
+  billingMode        String           @default("fixed") @map("billing_mode") // fixed | hourly
+  template           String           @default("minimal") // minimal | modern
+  currency           String           @default("USD")
+  
+  subtotal           Float            @default(0)
+  discount           Float            @default(0)
+  discountType       String           @default("percentage") @map("discount_type") // percentage | flat
+  taxRate            Float            @default(0) @map("tax_rate")
+  taxAmount          Float            @default(0) @map("tax_amount")
+  totalAmount        Float            @default(0) @map("total_amount")
+  amountPaid         Float            @default(0) @map("amount_paid")
+  balanceDue         Float            @default(0) @map("balance_due")
+  
+  notes              String?
+  paymentTerms       String?          @map("payment_terms")
+  
+  // Sender snapshot at time of invoice creation
+  senderSnapshot     Json?            @map("sender_snapshot")
+  // Client snapshot at time of invoice creation
+  clientSnapshot     Json?            @map("client_snapshot")
+  // Payment account snapshot
+  accountSnapshot    Json?            @map("account_snapshot")
+  // Design settings snapshot (padding, font, accent color, paper format, etc.)
+  design             Json?            @map("design")
+
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+
+  workspace          Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client             Client?          @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  paymentAccount     PaymentAccount?  @relation(fields: [paymentAccountId], references: [id], onDelete: SetNull)
+  lineItems          InvoiceItem[]
+  payments           InvoicePayment[]
+
+  @@unique([workspaceId, invoiceNumber])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  invoiceId Int      @map("invoice_id")
+  title     String
+  subtitle  String?
+  hours     Float?   @default(0)
+  rate      Float?   @default(0)
+  amount    Float    @default(0)
+  sortOrder Int      @default(0) @map("sort_order")
+
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_items")
+}
+
+model InvoicePayment {
+  id             Int      @id @default(autoincrement())
+  uuid           String   @unique @default(uuid())
+  invoiceId      Int      @map("invoice_id")
+  amount         Float
+  paymentDate    DateTime @default(now()) @map("payment_date")
+  paymentMethod  String?  @map("payment_method") // Wire | Wise | UPI | PayPal | etc.
+  transactionRef String?  @map("transaction_ref")
+  notes          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  invoice        Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_payments")
+}
