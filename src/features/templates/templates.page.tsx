@@ -18,34 +18,26 @@ const TEMPLATES: TemplateOption[] = [
   {
     id: 'minimal',
     name: 'Minimal Clean',
-    tagline: 'Timeless typography, generous whitespace, and subtle monochrome dividers.',
-    badge: 'Classic',
+    tagline: 'Timeless Scandinavian typography, generous whitespace, and borderless hairline rules.',
+    badge: 'Editorial',
     accentBg: 'bg-slate-100 border-slate-300',
-    features: ['High-whitespace layout', 'Subtle border lines', 'Universal business acceptance'],
+    features: ['High-whitespace layout', 'Borderless table with hairlines', 'Quiet understated luxury'],
   },
   {
     id: 'modern',
-    name: 'Modern Navy',
-    tagline: 'Deep slate accent sidebar with structured cards and bold headers.',
+    name: 'Modern Studio',
+    tagline: 'High-impact full-bleed color banner header, floating client cards, and dark totals callout.',
     badge: 'Popular',
     accentBg: 'bg-slate-900 border-slate-900',
-    features: ['Vertical accent banner', 'Tabular zebra striping', 'Card-based total summary'],
+    features: ['Full-bleed top color banner', 'Floating rounded client cards', 'High-contrast total summary'],
   },
   {
     id: 'executive',
     name: 'Executive Classic',
-    tagline: 'Formal corporate design with serif headings and elegant double borders.',
+    tagline: 'Formal enterprise letterhead with serif headings, structured ledger grid, and remittance instructions.',
     badge: 'Corporate',
     accentBg: 'bg-stone-800 border-stone-800',
-    features: ['Serif typographic hierarchy', 'Traditional remittance layout', 'Formal business terms'],
-  },
-  {
-    id: 'tech',
-    name: 'Tech Studio',
-    tagline: 'High-contrast dark banner, monospace reference codes, and emerald status tags.',
-    badge: 'Developer',
-    accentBg: 'bg-emerald-950 border-emerald-800',
-    features: ['Dark top header band', 'Monospace figures & IDs', 'Developer sprint format'],
+    features: ['Letterhead crest & double borders', 'Enclosed financial ledger grid', 'Formal remittance instructions slip'],
   },
 ];
 
@@ -69,11 +61,11 @@ export const TemplatesPage: React.FC = () => {
           Invoice Templates Gallery
         </h1>
         <p className="text-xs text-slate-500 mt-1 max-w-xl">
-          Choose a design system crafted for professional billing. All templates automatically adapt your font, margins, and brand accents.
+          Choose a design system crafted for professional billing. Each template features a completely distinct layout, visual structure, and typographic personality.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {TEMPLATES.map((tmpl) => {
           const isSelected = currentTemplate === tmpl.id;
 
@@ -151,4 +143,3 @@ export const TemplatesPage: React.FC = () => {
 };
 
 export default TemplatesPage;
-

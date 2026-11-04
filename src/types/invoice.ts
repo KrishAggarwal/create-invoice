@@ -77,7 +77,7 @@ export interface PaymentPaidInfo {
 export type InvoiceType = 'due' | 'paid';
 export type InvoiceStatus = 'draft' | 'due' | 'partially_paid' | 'paid' | 'overdue';
 export type BillingMode = 'fixed' | 'hourly';
-export type TemplateStyle = 'minimal' | 'modern' | 'executive' | 'tech';
+export type TemplateStyle = 'minimal' | 'modern' | 'executive';
 
 export interface DesignSettings {
   paddingMm: number; // default: 12 (compact: 12mm, range 4 to 48)

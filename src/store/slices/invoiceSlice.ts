@@ -193,7 +193,7 @@ const invoiceSlice = createSlice({
           type: inv.type,
           status: inv.status,
           billingMode: inv.billingMode || 'fixed',
-          template: inv.template || 'minimal',
+          template: (inv.template === 'executive' || inv.template === 'modern' ? inv.template : 'minimal') as TemplateStyle,
           invoiceNumber: inv.invoiceNumber,
           invoiceDate: inv.invoiceDate ? inv.invoiceDate.split('T')[0] : '',
           dueDate: inv.dueDate ? inv.dueDate.split('T')[0] : '',

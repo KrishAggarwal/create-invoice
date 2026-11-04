@@ -236,9 +236,10 @@ export const EditorPage: React.FC = () => {
               onClick={handleNewInvoice}
               className="h-8 px-2 sm:px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
               title="Start a fresh blank invoice"
+              aria-label="New Invoice"
             >
               <Plus className="w-3.5 h-3.5 text-slate-500" />
-              <span className="hidden sm:inline">New</span>
+              <span className="hidden md:inline">New</span>
             </button>
 
             {/* Live Draft vs Sample Layout Segmented Switcher */}
@@ -285,25 +286,17 @@ export const EditorPage: React.FC = () => {
                 type="button"
                 onClick={handleSave}
                 disabled={isSaving}
-                className={`h-8 px-2.5 sm:px-3 text-xs font-semibold rounded-lg border transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer shrink-0 disabled:opacity-50 ${
+                className={`h-8 px-2 sm:px-2.5 md:px-3 text-xs font-semibold rounded-lg border transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer shrink-0 disabled:opacity-50 ${
                   invoice.uuid
                     ? 'border-indigo-200 bg-indigo-50/80 text-indigo-900 hover:bg-indigo-100'
                     : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-800'
                 }`}
                 title={invoice.uuid ? 'Save changes to database' : 'Save invoice to database'}
+                aria-label={invoice.uuid ? 'Save Changes' : 'Save'}
               >
                 <Save className="w-3.5 h-3.5 text-slate-600" />
-                <span>
-                  {isSaving ? (
-                    'Saving...'
-                  ) : (
-                    <>
-                      <span className="hidden sm:inline">
-                        {invoice.uuid ? 'Save Changes' : 'Save'}
-                      </span>
-                      <span className="sm:hidden">Save</span>
-                    </>
-                  )}
+                <span className="hidden md:inline">
+                  {isSaving ? 'Saving...' : invoice.uuid ? 'Save Changes' : 'Save'}
                 </span>
               </button>
             )}
@@ -313,19 +306,13 @@ export const EditorPage: React.FC = () => {
               type="button"
               onClick={handleDownload}
               disabled={isDownloading}
-              className="h-8 px-3 sm:px-3.5 text-xs font-bold rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs cursor-pointer shrink-0"
+              className="h-8 px-2 sm:px-2.5 md:px-3.5 text-xs font-bold rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs cursor-pointer shrink-0"
               title="Download PDF document"
+              aria-label="Download PDF"
             >
               <Download className="w-3.5 h-3.5 text-emerald-400" />
-              <span>
-                {isDownloading ? (
-                  '...'
-                ) : (
-                  <>
-                    <span className="hidden sm:inline">Download PDF</span>
-                    <span className="sm:hidden">PDF</span>
-                  </>
-                )}
+              <span className="hidden md:inline">
+                {isDownloading ? '...' : 'Download PDF'}
               </span>
             </button>
           </div>

@@ -11,26 +11,20 @@ const TEMPLATES: { id: TemplateStyle; label: string; badge: string; description:
   {
     id: 'minimal',
     label: 'Minimal Clean',
-    badge: 'Classic',
-    description: 'Understated monochrome, high whitespace, clean typography',
+    badge: 'Editorial',
+    description: 'Borderless Scandinavian layout with airy whitespace and hairline rules',
   },
   {
     id: 'modern',
-    label: 'Modern Navy',
+    label: 'Modern Studio',
     badge: 'Popular',
-    description: 'Crisp vertical accent bar, structured card summaries',
+    description: 'Full-bleed color banner, floating client cards, and dark totals callout',
   },
   {
     id: 'executive',
-    label: 'Executive',
+    label: 'Executive Classic',
     badge: 'Corporate',
-    description: 'Formal serif headers, double border crest, traditional layout',
-  },
-  {
-    id: 'tech',
-    label: 'Tech Studio',
-    badge: 'Technical',
-    description: 'Dark studio header, monospace tags, sprint pills',
+    description: 'Formal letterhead with serif typography, ledger grid, and remittance slip',
   },
 ];
 
@@ -53,7 +47,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = React.memo(
                 key={tmpl.id}
                 type="button"
                 onClick={() => onTemplateChange(tmpl.id)}
-                className={`p-3.5 rounded-xl border text-left transition-all flex items-center justify-between ${
+                className={`p-3.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
                   isSelected
                     ? 'border-slate-900 bg-slate-900 text-white shadow-xs'
                     : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-800'
@@ -91,4 +85,3 @@ export const TemplateCard: React.FC<TemplateCardProps> = React.memo(
 );
 
 TemplateCard.displayName = 'TemplateCard';
-

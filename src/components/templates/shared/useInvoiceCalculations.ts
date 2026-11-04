@@ -36,6 +36,12 @@ export function getInvoiceTemplateData(data: InvoiceData) {
     formatDateRange(data.servicePeriodStart, data.servicePeriodEnd, data.design?.dateFormat) ||
     data.servicePeriod;
 
+  const rawReceivedDate =
+    data.paymentPaid?.paymentDate ||
+    data.payments?.[0]?.paymentDate ||
+    (isPaidReceipt ? data.invoiceDate : '');
+  const receivedDate = rawReceivedDate ? formatDate(rawReceivedDate) : '';
+
   const isLetter = data.design?.paperFormat === 'letter';
   const sheetWidth = isLetter ? '215.9mm' : '210mm';
   const sheetMinHeight = isLetter ? '279.4mm' : '297mm';
@@ -55,6 +61,7 @@ export function getInvoiceTemplateData(data: InvoiceData) {
     hasLineItems,
     formatDate,
     formattedPeriod,
+    receivedDate,
     isLetter,
     sheetWidth,
     sheetMinHeight,
@@ -65,5 +72,3 @@ export function getInvoiceTemplateData(data: InvoiceData) {
 
 // Backward compatibility alias
 export const useInvoiceCalculations = getInvoiceTemplateData;
-
-
